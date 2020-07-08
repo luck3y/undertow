@@ -63,6 +63,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -88,6 +89,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -113,6 +115,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -138,6 +141,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -163,6 +167,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -189,6 +194,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -214,6 +220,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -251,6 +258,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -289,6 +297,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -316,6 +325,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -343,6 +353,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -370,6 +381,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -405,6 +417,7 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
         }
     }
 
@@ -430,6 +443,15 @@ public class SameSiteCookieHandlerTestCase {
         } finally {
             client.getConnectionManager().shutdown();
             DefaultServer.stopSSLServer();
+            sleep(500);
+        }
+    }
+
+    public void sleep(final int len) {
+        try {
+            Thread.sleep(len);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

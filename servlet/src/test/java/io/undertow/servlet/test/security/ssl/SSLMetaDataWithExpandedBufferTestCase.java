@@ -38,6 +38,7 @@ public class SSLMetaDataWithExpandedBufferTestCase extends SSLMetaDataTestCase {
 
     @BeforeClass
     public static void setup() throws Exception {
+        System.out.println("SSLMetaDataWithExpandedBufferTestCase setup");
         final SSLContext context = SSLContext.getDefault();
         final SSLEngine firstEngine = context.createSSLEngine();
         firstEngine.setUseClientMode(false);

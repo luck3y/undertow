@@ -69,8 +69,11 @@ public class SecureCookieHandlerTestCase {
             header = result.getFirstHeader("set-cookie");
             Assert.assertEquals("foo=bar", header.getValue());
         } finally {
+            System.out.println("Client shutdown");
             client.getConnectionManager().shutdown();
+            System.out.println("Server shutdown");
             DefaultServer.stopSSLServer();
+            System.out.println("Finished");
         }
     }
 

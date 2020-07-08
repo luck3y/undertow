@@ -50,6 +50,7 @@ public class SSLMetaDataTestCase {
 
     @BeforeClass
     public static void setup() throws Exception {
+        System.out.println("SSLMetaDataTestCase setup");
         DefaultServer.startSSLServer();
 
         final PathHandler root = new PathHandler();
@@ -78,6 +79,7 @@ public class SSLMetaDataTestCase {
 
     @AfterClass
     public static void cleanUp() throws Exception {
+        System.out.println("SSLMetaDataTestCase cleanUp");
         DefaultServer.stopSSLServer();
     }
 

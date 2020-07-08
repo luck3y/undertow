@@ -606,6 +606,7 @@ public class DefaultServer extends BlockJUnit4ClassRunner {
      * authentication.
      */
     public static void startSSLServer() throws IOException {
+        System.out.println("DefaultServer startSSLServer");
         SSLContext serverContext = getServerSslContext();
         getClientSSLContext();
 
@@ -708,6 +709,7 @@ public class DefaultServer extends BlockJUnit4ClassRunner {
      * cause an error.
      */
     public static void stopSSLServer() throws IOException {
+        System.out.println("DefaultServer stopSSLServer");
         if (sslServer != null) {
             sslServer.close();
             sslServer = null;
@@ -721,6 +723,7 @@ public class DefaultServer extends BlockJUnit4ClassRunner {
     }
 
     public static String getHostAddress(String serverName) {
+        System.out.println(serverName + "->" + System.getProperty(serverName + ".server.address", "localhost"));
         return System.getProperty(serverName + ".server.address", "localhost");
     }
 

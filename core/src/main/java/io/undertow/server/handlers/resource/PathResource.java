@@ -283,7 +283,7 @@ public class PathResource implements RangeAwareResource {
 
     @Override
     public Path getFilePath() {
-        return file;
+        return file.normalize();
     }
 
     @Override
