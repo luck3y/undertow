@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  build-jdk8:
+  build-all:
     name: Compile (no tests) with JDK 11
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
   test-matrix:
     name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: build-jdk11
+    needs: build-all
     strategy:
       fail-fast: false
       matrix:
