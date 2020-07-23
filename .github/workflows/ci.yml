@@ -48,7 +48,7 @@ jobs:
     steps:
     - name: Get Hostname
       id: lhostname
-      run: echo ::set-output lhostname=$(hostname)
+      run: echo ::set-output name=lhostname::$(hostname)
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
