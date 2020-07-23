@@ -8,12 +8,29 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  jdk8:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+  maven_cache:
+    name: Build Initial Maven Cache
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: joschi/setup-jdk@v1
+      with:
+        java-version: 11
+    - name: Cache Maven packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          m2-
+    - name: Build Maven Cache
+      run: |
+        mvn --version
+        mvn clean
+  build-jdk11:
+    runs-on: ubuntu-latest
+    needs: maven_cache
     steps:
     - uses: n1hility/cancel-previous-runs@v2
       with:
@@ -22,32 +39,31 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-
+          m2-
     - name: Set up JDK 1.8
       uses: joschi/setup-jdk@v2
       with:
-        java-version: 8
-    - name: netstat
-      run: |
-        netstat -anp
-        cat /etc/hosts
-        ifconfig -a
-        env
+        java-version: 11
     - name: Build & Test
-      run: mvn -U -B -fae -Pproxy '-DfailIfNoTests=false' '-Dfindbugs' '-Dtest=io.undertow.server.ssl.ComplexSSLTestCase' package
+      run: mvn -U -B -fae -DskipTests '-Dfindbugs' clean install
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
         name: surefire-reports-${{ matrix.os }}-${{ matrix.java }}-${{ matrix.wildfly-version }}
         path: '**/surefire-reports/*.txt'
-  jdk11:
+
+  test-matrix:
+    name: JDK ${{ matrix.jdk }} JVM Tests
     runs-on: ${{ matrix.os }}
+    needs: build-jdk11
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+        modules: [parser-generator, core, servlet, websockets-jsr]
+        jdk: [8. 11]
     steps:
     - uses: n1hility/cancel-previous-runs@v2
       with:
@@ -56,70 +72,15 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-    - name: Set up JDK 11
+    - name: Set up JDK ${{ matrix.java.name }}
       uses: joschi/setup-jdk@v2
       with:
-        java-version: 11
-    - name: netstat
-      run: |
-        cat /proc/sys/net/ipv4/ip_local_port_range
-        cat /proc/sys/net/ipv4/tcp_tw_reuse
-        sudo sysctl -w net.ipv4.tcp_tw_reuse=1
-        cat /proc/sys/net/ipv4/tcp_mem
-        cat /proc/sys/net/core/rmem_default
-        cat /proc/sys/net/core/rmem_max
-        cat /proc/sys/net/core/wmem_default
-        cat /proc/sys/net/core/wmem_max
-        cat /proc/sys/net/core/optmem_max
-        sudo sysctl -w net.core.wmem_max=12582912
-        sudo sysctl -w net.core.rmem_max=12582912
-        sudo sysctl -w net.ipv4.tcp_rmem='10240 87380 12582912'
-        sudo sysctl -w net.ipv4.tcp_wmem='10240 87380 12582912'
-        sudo sysctl -w net.ipv4.tcp_window_scaling=1
-        sudo sysctl -w net.ipv4.tcp_timestamps=1
-        sudo sysctl -w net.ipv4.tcp_sack=1
-        cat /proc/sys/net/ipv4/tcp_mem
-        cat /proc/sys/net/core/rmem_default
-        cat /proc/sys/net/core/rmem_max
-        cat /proc/sys/net/core/wmem_default
-        cat /proc/sys/net/core/wmem_max
-        cat /proc/sys/net/core/optmem_max
+        java-version: ${{ matrix.jdk}}
     - name: Build & Test
-      run: mvn -U -B -fae -Pproxy '-DfailIfNoTests=false' package
-    - name: sockets
-      if: failure()
-      run: netstat -anp
-    - uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: surefire-reports-${{ matrix.os }}-${{ matrix.java }}-${{ matrix.wildfly-version }}
-        path: '**/surefire-reports/*.txt'
-  jdk11-ipv6:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-    steps:
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    - name: Set up JDK 11
-      uses: joschi/setup-jdk@v2
-      with:
-        java-version: 11
-    - name: Build & Test
-      run: mvn -U -B -fae -Pproxy '-DfailIfNoTests=false' '-Dfindbugs' '-Dtest.ipv6=true' package
+      run: mvn -U -B -fae -Pproxy '-DfailIfNoTests=false' test
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
