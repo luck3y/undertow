@@ -43,7 +43,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        module: [parser-generator, core, servlet, websockets-jsr]
+        module: [core, servlet, websockets-jsr]
         jdk: [8, 11]
     steps:
     - uses: n1hility/cancel-previous-runs@v2
@@ -63,7 +63,7 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae -Pproxy '-DfailIfNoTests=false' test
+      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
