@@ -51,9 +51,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
     - name: Host information
       run: |
-       hostname
-       cat /etc/resolv.conf
-       cat /etc/hosts
+       hostname || true
+       cat /etc/resolv.conf || true
+       cat /etc/hosts || true
     - uses: actions/checkout@v2
     - name: Download Maven Repo
       uses: actions/download-artifact@v1
