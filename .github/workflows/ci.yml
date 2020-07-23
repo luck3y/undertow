@@ -33,7 +33,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: surefire-reports-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.wildfly-version }}
+        name: surefire-reports-build
         path: '**/surefire-reports/*.txt'
   test-matrix:
     name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
@@ -67,5 +67,5 @@ jobs:
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: surefire-reports-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.wildfly-version }}
+        name: surefire-reports-${{ matrix.module}}-${{ matrix.os }}-${{ matrix.jdk }}
         path: '**/surefire-reports/*.txt'
