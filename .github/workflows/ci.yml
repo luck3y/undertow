@@ -8,81 +8,64 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  maven_cache:
-    name: Build Initial Maven Cache
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 11
-      uses: joschi/setup-jdk@v1
-      with:
-        java-version: 11
-    - name: Cache Maven packages
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2
-        key: m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          m2-
-    - name: Build Maven Cache
-      run: |
-        mvn --version
-        mvn clean
   build-jdk11:
     name: Compile (no tests) with JDK 11
     runs-on: ubuntu-latest
-    needs: maven_cache
     steps:
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@v2
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2
-        key: m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          m2-
     - name: Set up JDK 11
       uses: joschi/setup-jdk@v2
       with:
         java-version: 11
-    - name: Build & Test
+    - name: Build
       run: mvn -U -B -fae -DskipTests '-Dfindbugs' clean install
+    - name: Tar Maven Repo
+      shell: bash
+      run: tar -czf maven-repo.tgz -C ~ .m2/repository
+    - name: Persist Maven Repo
+      uses: actions/upload-artifact@v1
+      with:
+        name: maven-repo
+        path: maven-repo.tgz
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: surefire-reports-${{ matrix.os }}-${{ matrix.java }}-${{ matrix.wildfly-version }}
+        name: surefire-reports-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.wildfly-version }}
         path: '**/surefire-reports/*.txt'
   test-matrix:
-    name: JDK ${{ matrix.jdk }} JVM Tests - ${{ matrix.module }} - ${{ matrix.os }}
+    name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-jdk11
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        modules: [parser-generator, core, servlet, websockets-jsr]
+        module: [parser-generator, core, servlet, websockets-jsr]
         jdk: [8, 11]
     steps:
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@v2
-    - uses: actions/cache@v1
+    - name: Download Maven Repo
+      uses: actions/download-artifact@v1
       with:
-        path: ~/.m2
-        key: m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          m2-
+        name: maven-repo
+        path: .
+    - name: Extract Maven Repo
+      shell: bash
+      run: tar -xzf maven-repo.tgz -C ~
     - name: Set up JDK ${{ matrix.java }}
       uses: joschi/setup-jdk@v2
       with:
-        java-version: ${{ matrix.jdk}}
-    - name: Build & Test
+        java-version: ${{ matrix.jdk }}
+    - name: Run Tests
       run: mvn -U -B -fae -Pproxy '-DfailIfNoTests=false' test
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: surefire-reports-${{ matrix.os }}-${{ matrix.java }}-${{ matrix.wildfly-version }}
+        name: surefire-reports-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.wildfly-version }}
         path: '**/surefire-reports/*.txt'
