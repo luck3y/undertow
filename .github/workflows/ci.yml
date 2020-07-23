@@ -49,6 +49,11 @@ jobs:
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Host information
+      run: |
+       hostname
+       cat /etc/resolv.conf
+       cat /etc/hosts
     - uses: actions/checkout@v2
     - name: Download Maven Repo
       uses: actions/download-artifact@v1
