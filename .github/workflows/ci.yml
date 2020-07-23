@@ -46,14 +46,15 @@ jobs:
         module: [core, servlet, websockets-jsr]
         jdk: [8, 11]
     steps:
+    - name: Get Hostname
+      id: lhostname
+      run: echo ::set-output lhostname=$(hostname)
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
     - name: Host information
       run: |
        hostname || true
-       cat /etc/resolv.conf || true
-       cat /etc/hosts || true
     - uses: actions/checkout@v2
     - name: Download Maven Repo
       uses: actions/download-artifact@v1
@@ -68,7 +69,7 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' '-Ddefault.server.address=${{ steps.lhostname.outputs.lhostname }}' ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
