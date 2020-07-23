@@ -78,11 +78,13 @@ public class HttpHostValuesTestCase {
         TestHttpClient client = new TestHttpClient();
         try {
             HttpGet get = new HttpGet(DefaultServer.getDefaultServerURL() + "/servletContext/");
+            System.out.println("Server URL: " + DefaultServer.getDefaultServerURL() + "/servletContext/");
             HttpResponse result = client.execute(get);
             Assert.assertEquals(StatusCodes.OK, result.getStatusLine().getStatusCode());
             final String response = HttpClientUtils.readResponse(result);
-
+            System.out.println("RESP: " + response);
             if(System.getProperty("os.name").toLowerCase().contains("windows") || System.getSecurityManager() != null) {
+                System.out.println("host:" + DefaultServer.getDefaultServerAddress().toString());
                 Assert.assertTrue(String.format("hostName: %s , response: %s", DefaultServer.getDefaultServerAddress().toString(), response), DefaultServer.getDefaultServerAddress().toString().contains(response));
             } else {
                 Assert.assertTrue(String.format("hostName: %s , response: %s", DefaultServer.getHostAddress(), response), DefaultServer.getHostAddress().equals(response));
