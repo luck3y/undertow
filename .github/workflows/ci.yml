@@ -48,7 +48,7 @@ jobs:
     steps:
     - name: Update hosts
       run: |
-        sudo echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts
+        sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
