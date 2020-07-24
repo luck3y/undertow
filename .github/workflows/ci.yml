@@ -36,7 +36,7 @@ jobs:
         name: surefire-reports-build
         path: '**/surefire-reports/*.txt'
   test-matrix:
-    name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
+    name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} ${{ matrix.proxy }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-all
     strategy:
