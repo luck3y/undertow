@@ -54,6 +54,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' >	%SystemRoot%\System32\drivers\etc\hosts
+      shell: cmd
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
