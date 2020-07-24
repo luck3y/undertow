@@ -45,6 +45,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         module: [core, servlet, websockets-jsr]
         jdk: [8, 11]
+        proxy: ['-Pproxy', '']
     steps:
     - name: Update hosts - linux
       if: matrix.os == 'ubuntu-latest'
@@ -78,7 +79,7 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+      run: mvn -U -B -fae test ${{ matrix.proxy }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
