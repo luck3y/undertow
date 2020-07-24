@@ -46,9 +46,9 @@ jobs:
         module: [core, servlet, websockets-jsr]
         jdk: [8, 11]
     steps:
-    - name: Get Hostname
-      id: lhostname
-      run: echo ::set-output name=lhostname::$(hostname)
+    - name: Update hosts
+      run: |
+        sudo echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' "-Ddefault.server.address=${{ steps.lhostname.outputs.lhostname }}" -pl ${{ matrix.module }}
+      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
