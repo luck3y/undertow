@@ -91,3 +91,13 @@ jobs:
       with:
         name: surefire-reports-${{ matrix.module}}-${{ matrix.os }}-${{ matrix.jdk }}
         path: '**/surefire-reports/*.txt'
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install JDK 11
+        uses: joschi/setup-jdk@v1.0.0
+        with:
+          java-version: 'openjdk11'
+      - name: Build with Maven
+        run: mvn -B clean install -Pproxy -fae
