@@ -22,6 +22,8 @@ jobs:
         restore-keys: |
             m2-
     - uses: actions/checkout@v2
+    - name: Check Environment
+      run: getenforce
     - name: Set up JDK 8
       uses: joschi/setup-jdk@v2
       with:
@@ -42,7 +44,7 @@ jobs:
         name: surefire-reports-build
         path: '**/surefire-reports/*.txt'
   test-matrix:
-    name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} ${{ matrix.proxy }} - ${{ matrix.os }}
+    name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-all
     strategy:
