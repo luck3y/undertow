@@ -22,8 +22,6 @@ jobs:
         restore-keys: |
             m2-
     - uses: actions/checkout@v2
-    - name: Check Environment
-      run: getenforce
     - name: Set up JDK 8
       uses: joschi/setup-jdk@v2
       with:
