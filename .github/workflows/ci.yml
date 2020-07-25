@@ -86,7 +86,7 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+      run: mvn -Xms756M -Xmx1g -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
@@ -122,7 +122,7 @@ jobs:
       with:
         java-version: 11
     - name: Run Tests
-      run: mvn -U -B -fae test '-DfailIfNoTests=false' -pl
+      run: mvn -Xms756M -Xmx1g -U -B -fae test '-DfailIfNoTests=false' -pl
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
