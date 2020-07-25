@@ -92,7 +92,7 @@ jobs:
         name: surefire-reports-${{ matrix.module}}-${{ matrix.os }}-${{ matrix.jdk }}
         path: '**/surefire-reports/*.txt'
   jdk11-noproxy:
-    name: JDK 11 no-proxy
+    name: JDK 11 no-proxy ipv6
     runs-on: ubuntu-latest
     needs: build-all
     steps:
@@ -121,7 +121,7 @@ jobs:
       with:
         java-version: 11
     - name: Run Tests
-      run: mvn '-DargLine="-Xmx5g -Xms5g"' -U -B -fae test '-DfailIfNoTests=false' -pl
+      run: mvn -U -B -fae test '-DfailIfNoTests=false' -Dtest.ipv6=true '-DargLine="-Xmx5g -Xms5g"'
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
