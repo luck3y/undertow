@@ -93,8 +93,13 @@ jobs:
   jdk11-noproxy:
     name: JDK 11 no-proxy ipv6
     runs-on: ubuntu-latest
+    container:
+      image: quay.io/fedora/fedora:32-x86_64
     needs: build-all
     steps:
+    - name: install packages
+      run: |
+        dnf -y install procps-ng-3.3.15 java-11-openjdk maven git
     - name: Update hosts - linux
       run: |
         sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
