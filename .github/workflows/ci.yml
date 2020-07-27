@@ -44,9 +44,6 @@ jobs:
   test-matrix-fedora:
     name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    container:
-      image: quay.io/fedora/fedora:32-x86_64
-      options: "--privileged"
     needs: build-all
     strategy:
       fail-fast: false
@@ -54,11 +51,13 @@ jobs:
         os: [ubuntu-latest]
         module: [core, servlet, websockets-jsr]
         jdk: [8, 11]
+    container:
+      image: quay.io/fedora/fedora:32-x86_64
+      options: "--privileged"
     steps:
     - name: install packages
       run: |
         dnf -y install procps-ng-3.3.15 java-11-openjdk maven git hostname
-    - name: Update hosts - linux
     - name: Update hosts - linux
       if: matrix.os == 'ubuntu-latest'
       run: |
