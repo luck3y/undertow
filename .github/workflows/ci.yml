@@ -91,7 +91,7 @@ jobs:
         name: surefire-reports-${{ matrix.module}}-${{ matrix.os }}-${{ matrix.jdk }}
         path: '**/surefire-reports/*.txt'
   jdk11-noproxy:
-    name: JDK 11 no-proxy ipv6
+    name: JDK 11 ipv6
     runs-on: ubuntu-latest
     container:
       image: quay.io/fedora/fedora:32-x86_64
@@ -113,7 +113,7 @@ jobs:
        hostname || true
     - uses: actions/checkout@v2
     - name: Run Tests
-      run: mvn -U -B -fae test '-DfailIfNoTests=false' -Dtest.ipv6=true '-DargLine="-Xmx5g -Xms5g"'
+      run: mvn -U -B -fae clean install '-DfailIfNoTests=false' -Dtest.ipv6=true '-DargLine="-Xmx5g -Xms5g"' -Pproxy
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
