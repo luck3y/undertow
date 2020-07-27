@@ -41,17 +41,24 @@ jobs:
       with:
         name: surefire-reports-build
         path: '**/surefire-reports/*.txt'
-  test-matrix:
+  test-matrix-fedora:
     name: JDK ${{ matrix.jdk }} - ${{ matrix.module }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    container:
+      image: quay.io/fedora/fedora:32-x86_64
+      options: "--privileged"
     needs: build-all
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-latest]
+        os: [ubuntu-latest]
         module: [core, servlet, websockets-jsr]
         jdk: [8, 11]
     steps:
+    - name: install packages
+      run: |
+        dnf -y install procps-ng-3.3.15 java-11-openjdk maven git hostname
+    - name: Update hosts - linux
     - name: Update hosts - linux
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -89,33 +96,4 @@ jobs:
       if: failure()
       with:
         name: surefire-reports-${{ matrix.module}}-${{ matrix.os }}-${{ matrix.jdk }}
-        path: '**/surefire-reports/*.txt'
-  jdk11-noproxy:
-    name: JDK 11 ipv6
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/fedora/fedora:32-x86_64
-      options: "--privileged"
-    steps:
-    - name: install packages
-      run: |
-        dnf -y install procps-ng-3.3.15 java-11-openjdk maven git hostname
-    - name: Update hosts - linux
-      run: |
-        sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
-        sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
-        sudo sysctl -w fs.file-max=2097152
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Host information
-      run: |
-       hostname || true
-    - uses: actions/checkout@v2
-    - name: Run Tests
-      run: mvn -U -B -fae clean install '-DfailIfNoTests=false' -Dtest.ipv6=true '-DargLine="-Xmx5g -Xms5g"' -Pproxy
-    - uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: surefire-reports-jdk11-noproxy
         path: '**/surefire-reports/*.txt'
