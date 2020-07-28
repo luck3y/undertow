@@ -36,6 +36,8 @@ jobs:
         ifconfig -a 
         netstat -nr
         route -n
+        sudo /sbin/ip route del default via 172.17.0.1 dev docker0 metric 0
+        route -n
     - name: Build
       run: mvn -U -B -fae -DskipTests -Dfindbugs clean install
     - name: Tar Maven Repo
