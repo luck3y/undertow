@@ -28,6 +28,8 @@ jobs:
         java-version: 8
     - name: Host information
       run: |
+        apt-get update
+        apt-get install dnsutils
         hostname || true
         nslooklup `hostname`
         cat /etc/resolv.conf
