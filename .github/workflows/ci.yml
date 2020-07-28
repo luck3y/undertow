@@ -26,6 +26,12 @@ jobs:
       uses: joschi/setup-jdk@v2
       with:
         java-version: 8
+    - name: Host information
+      run: |
+        hostname || true
+        nslooklup `hostname`
+        cat /etc/resolv.conf
+        ifconfig -a
     - name: Build
       run: mvn -U -B -fae -DskipTests -Dfindbugs clean install
     - name: Tar Maven Repo
