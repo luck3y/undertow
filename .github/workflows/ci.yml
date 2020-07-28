@@ -35,6 +35,7 @@ jobs:
         cat /etc/resolv.conf
         ifconfig -a 
         netstat -nr
+        route -n
     - name: Build
       run: mvn -U -B -fae -DskipTests -Dfindbugs clean install
     - name: Tar Maven Repo
