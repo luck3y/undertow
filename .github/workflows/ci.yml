@@ -37,6 +37,7 @@ jobs:
         netstat -nr
         route -n
         sudo systemctl stop docker
+        sudo ip link delete docker0
         route -n
     - name: Build
       run: mvn -U -B -fae -DskipTests -Dfindbugs clean install
