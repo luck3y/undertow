@@ -33,7 +33,7 @@ jobs:
         hostname || true
         dig `hostname`
         cat /etc/resolv.conf
-        ifconfig -a
+        ifconfig -a 
     - name: Build
       run: mvn -U -B -fae -DskipTests -Dfindbugs clean install
     - name: Tar Maven Repo
