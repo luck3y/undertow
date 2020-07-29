@@ -63,9 +63,12 @@ jobs:
         ulimit -a
         echo Set fs.file-max:
         sudo sysctl -w fs.file-max=2097152
-        sudo bash -c "echo '* - nofile 32768' >> /etc/security/limits.conf"
+        echo Current /etc/security/limits.conf:
+        cat /etc/security/limits.conf
+        echo Update /etc/security/limits.conf
+        sudo bash -c "echo '* - nofile 131702' >> /etc/security/limits.conf"
         echo Set shell limits:
-        ulimit -n 16384
+        ulimit -n 131702
         echo New Limits:
         ulimit -a
     - name: Update hosts - windows
