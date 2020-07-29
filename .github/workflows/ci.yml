@@ -23,7 +23,8 @@ jobs:
         echo Current /etc/security/limits.conf:
         cat /etc/security/limits.conf
         echo "Update limits.conf"
-        sudo bash -c "echo '* - nofile 131702' > /etc/security/limits.conf"
+        sudo bash -c "echo '* soft nofile 131702' > /etc/security/limits.conf"
+        sudo bash -c "echo '* hard nofile 131702' >> /etc/security/limits.conf"
         echo "New Limits:""
         echo "/etc/systemd/user.conf"
         cat /etc/systemd/user.conf
