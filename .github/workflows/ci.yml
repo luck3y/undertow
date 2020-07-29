@@ -12,29 +12,6 @@ jobs:
     name: Compile (no tests) with JDK 8
     runs-on: ubuntu-latest
     steps:
-    - name: Update shell limits
-      run: |
-        echo Current fs.file-max:
-        sysctl fs.file-max
-        echo Current Limits:
-        ulimit -a
-        echo "Set fs.file-max"
-        sudo sysctl -w fs.file-max=2097152
-        echo Current /etc/security/limits.conf:
-        cat /etc/security/limits.conf
-        echo "Update limits.conf"
-        sudo bash -c "echo '* soft nofile 131702' > /etc/security/limits.conf"
-        sudo bash -c "echo '* hard nofile 131702' >> /etc/security/limits.conf"
-        echo "New Limits:""
-        echo "/etc/systemd/user.conf"
-        cat /etc/systemd/user.conf
-        echo "/etc/systemd/system.conf"
-        cat /etc/systemd/user.conf
-        ulimit -a
-        echo "Update shell limits:"
-        ulimit -n 80001
-        echo "New Limits:""
-        ulimit -a
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +28,6 @@ jobs:
         java-version: 8
     - name: Build
       run: |
-        ulimit -a
         mvn -U -B -fae -DskipTests -Dfindbugs clean install
     - name: Tar Maven Repo
       shell: bash
@@ -82,22 +58,7 @@ jobs:
       run: |
         sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
         sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
-        echo Current fs.file-max:
-        sysctl fs.file-max
-        echo Current Limits:
-        ulimit -a
-        echo "Set fs.file-max"
         sudo sysctl -w fs.file-max=2097152
-        echo Current /etc/security/limits.conf:
-        cat /etc/security/limits.conf
-        echo "Update limits.conf"
-        sudo bash -c "echo '* - nofile 131702' > /etc/security/limits.conf"
-        echo "New Limits:""
-        ulimit -a
-        echo "Update shell limits:"
-        sudo ulimit -n 131702
-        echo "New Limits:""
-        ulimit -a
     - name: Update hosts - windows
       if: matrix.os == 'windows-latest'
       run: |
@@ -124,57 +85,57 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+      run: mvn -U -B -fae test -Pproxy '-DfailIfNoTests=false' -pl ${{ matrix.module }} -Dtest=SameSiteCookieHandlerTestCase
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
         name: surefire-reports-${{ matrix.jdk }}-${{ matrix.module }}-${{ matrix.os }}
         path: '**/surefire-reports/*.txt'
-  test-matrix-ipv6:
-    name: JDK ${{ matrix.jdk }} - ipv6 - ${{ matrix.module }} ${{ matrix.proxy }} - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    needs: build-all
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        module: [core, servlet, websockets-jsr]
-        proxy: ['-Pproxy', '']
-        jdk: [11]
-    steps:
-    - name: Update hosts - linux
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
-        sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
-        ulimit -a
-        sudo sysctl -w fs.file-max=2097152
-        sudo bash -c "echo '* - nofile 32768' >> /etc/security/limits.conf"
-        ulimit -n 16384
-        ulimit -a
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Host information
-      run: |
-       hostname || true
-    - uses: actions/checkout@v2
-    - name: Download Maven Repo
-      uses: actions/download-artifact@v1
-      with:
-        name: maven-repo
-        path: .
-    - name: Extract Maven Repo
-      shell: bash
-      run: tar -xzf maven-repo.tgz -C ~
-    - name: Set up JDK ${{ matrix.java }}
-      uses: joschi/setup-jdk@v2
-      with:
-        java-version: ${{ matrix.jdk }}
-    - name: Run Tests
-      run: mvn -U -B -fae test ${{ matrix.proxy }} '-DfailIfNoTests=false' -pl ${{ matrix.module }} -Dtest.ipv6=true
-    - uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: surefire-reports-${{ matrix.jdk }}-ipv6-${{ matrix.module }}${{ matrix.proxy }}-${{ matrix.os }}
-        path: '**/surefire-reports/*.txt'
+  # test-matrix-ipv6:
+  #   name: JDK ${{ matrix.jdk }} - ipv6 - ${{ matrix.module }} ${{ matrix.proxy }} - ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   needs: build-all
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-latest]
+  #       module: [core, servlet, websockets-jsr]
+  #       proxy: ['-Pproxy', '']
+  #       jdk: [11]
+  #   steps:
+  #   - name: Update hosts - linux
+  #     if: matrix.os == 'ubuntu-latest'
+  #     run: |
+  #       sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
+  #       sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
+  #       ulimit -a
+  #       sudo sysctl -w fs.file-max=2097152
+  #       sudo bash -c "echo '* - nofile 32768' >> /etc/security/limits.conf"
+  #       ulimit -n 16384
+  #       ulimit -a
+  #   - uses: n1hility/cancel-previous-runs@v2
+  #     with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #   - name: Host information
+  #     run: |
+  #      hostname || true
+  #   - uses: actions/checkout@v2
+  #   - name: Download Maven Repo
+  #     uses: actions/download-artifact@v1
+  #     with:
+  #       name: maven-repo
+  #       path: .
+  #   - name: Extract Maven Repo
+  #     shell: bash
+  #     run: tar -xzf maven-repo.tgz -C ~
+  #   - name: Set up JDK ${{ matrix.java }}
+  #     uses: joschi/setup-jdk@v2
+  #     with:
+  #       java-version: ${{ matrix.jdk }}
+  #   - name: Run Tests
+  #     run: mvn -U -B -fae test ${{ matrix.proxy }} '-DfailIfNoTests=false' -pl ${{ matrix.module }} -Dtest.ipv6=true
+  #   - uses: actions/upload-artifact@v2
+  #     if: failure()
+  #     with:
+  #       name: surefire-reports-${{ matrix.jdk }}-ipv6-${{ matrix.module }}${{ matrix.proxy }}-${{ matrix.os }}
+  #       path: '**/surefire-reports/*.txt'
