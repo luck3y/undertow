@@ -12,6 +12,28 @@ jobs:
     name: Compile (no tests) with JDK 8
     runs-on: ubuntu-latest
     steps:
+    - name: Update shell limits
+      run: |
+        echo Current fs.file-max:
+        sysctl fs.file-max
+        echo Current Limits:
+        ulimit -a
+        echo "Set fs.file-max"
+        sudo sysctl -w fs.file-max=2097152
+        echo Current /etc/security/limits.conf:
+        cat /etc/security/limits.conf
+        echo "Update limits.conf"
+        sudo bash -c "echo '* - nofile 131702' > /etc/security/limits.conf"
+        echo "New Limits:""
+        echo "/etc/systemd/user.conf"
+        cat /etc/systemd/user.conf
+        echo "/etc/systemd/system.conf"
+        cat /etc/systemd/user.conf
+        ulimit -a
+        echo "Update shell limits:"
+        sudo ulimit -n 131702
+        echo "New Limits:""
+        ulimit -a
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,7 +92,7 @@ jobs:
         echo "New Limits:""
         ulimit -a
         echo "Update shell limits:"
-        ulimit -n 131702
+        sudo ulimit -n 131702
         echo "New Limits:""
         ulimit -a
     - name: Update hosts - windows
