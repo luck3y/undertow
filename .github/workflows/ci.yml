@@ -61,15 +61,15 @@ jobs:
         sysctl fs.file-max
         echo Current Limits:
         ulimit -a
-        echo Set fs.file-max:
+        echo "Set fs.file-max"
         sudo sysctl -w fs.file-max=2097152
         echo Current /etc/security/limits.conf:
         cat /etc/security/limits.conf
-        echo Update limits.conf
+        echo "Update limits.conf"
         sudo bash -c "echo '* - nofile 131702' > /etc/security/limits.conf"
-        echo "new shell limits:"
+        echo "Update shell limits:"
         ulimit -n 131702
-        echo New Limits:
+        echo "New Limits:""
         ulimit -a
     - name: Update hosts - windows
       if: matrix.os == 'windows-latest'
