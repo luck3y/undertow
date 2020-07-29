@@ -67,6 +67,8 @@ jobs:
         cat /etc/security/limits.conf
         echo "Update limits.conf"
         sudo bash -c "echo '* - nofile 131702' > /etc/security/limits.conf"
+        echo "New Limits:""
+        ulimit -a
         echo "Update shell limits:"
         ulimit -n 131702
         echo "New Limits:""
