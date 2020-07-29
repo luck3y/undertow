@@ -50,7 +50,9 @@ jobs:
       with:
         java-version: 8
     - name: Build
-      run: mvn -U -B -fae -DskipTests -Dfindbugs clean install
+      run: |
+        ulimit -a
+        mvn -U -B -fae -DskipTests -Dfindbugs clean install
     - name: Tar Maven Repo
       shell: bash
       run: tar -czf maven-repo.tgz -C ~ .m2/repository
