@@ -31,7 +31,7 @@ jobs:
         cat /etc/systemd/user.conf
         ulimit -a
         echo "Update shell limits:"
-        ulimit -n 80000
+        ulimit -n 80001
         echo "New Limits:""
         ulimit -a
     - uses: n1hility/cancel-previous-runs@v2
