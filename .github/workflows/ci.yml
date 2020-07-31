@@ -61,6 +61,7 @@ jobs:
         sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
         sudo sysctl -w fs.file-max=2097152
         sudo sysctl -w net.ipv4.ip_local_port_range="13000 64000"
+        sudo sysctl -w net.ipv4.tcp_tw_reuse=0
         sudo apt-get update -y
         sudo apt-get install openssl net-tools -y
     - name: Configure Runner - Windows
@@ -120,6 +121,7 @@ jobs:
           sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
           sudo sysctl -w fs.file-max=2097152
           sudo sysctl -w net.ipv4.ip_local_port_range="13000 64000"
+          sudo sysctl -w net.ipv4.tcp_tw_reuse=0
           sudo apt-get update -y
           sudo apt-get install openssl net-tools -y
       - name: Configure Runner - Windows
