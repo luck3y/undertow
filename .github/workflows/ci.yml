@@ -49,7 +49,8 @@ jobs:
       matrix:
         module: [core, servlet]
         protocol: ['', '''-Dtest.proxy=true''', '''-Dtest.https=true''', '''-Dtest.ajp=true''', '''-Dtest.h2=true''', '''-Dtest.h2c=true''', '''-Dtest.h2c-upgrade=true''']
-        os: [ubuntu-20.04, windows-latest]
+        #os: [ubuntu-20.04, windows-latest]
+        os: [ubuntu-20.04]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
@@ -64,6 +65,14 @@ jobs:
         sudo sysctl -w net.ipv4.tcp_tw_reuse=0
         sudo apt-get update -y
         sudo apt-get install openssl net-tools -y
+        sudo bash -c "sed -i '1 i\openssl_conf = default_conf' /etc/ssl/openssl.cnf"
+        sudo bash -c "echo '[ default_conf ]' >> /etc/ssl/openssl.cnf"
+        sudo bash -c "echo 'ssl_conf = ssl_sect' >> /etc/ssl/openssl.cnf"
+        sudo bash -c "echo '[ssl_sect]' >> /etc/ssl/openssl.cnf"
+        sudo bash -c "echo 'system_default = ssl_default_sect' >> /etc/ssl/openssl.cnf"
+        sudo bash -c "echo '[ssl_default_sect]' >> /etc/ssl/openssl.cnf"
+        sudo bash -c "echo 'MinProtocol = TLSv1.2' >> /etc/ssl/openssl.cnf"
+        sudo bash -c "echo 'CipherString = DEFAULT:@SECLEVEL=1' >> /etc/ssl/openssl.cnf"
     - name: Configure Runner - Windows
       if: contains(matrix.os, 'windows')
       run: |
@@ -109,7 +118,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        #os: [ubuntu-20.04, windows-latest]
+        os: [ubuntu-20.04]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
@@ -124,6 +134,14 @@ jobs:
           sudo sysctl -w net.ipv4.tcp_tw_reuse=0
           sudo apt-get update -y
           sudo apt-get install openssl net-tools -y
+          sudo bash -c "sed -i '1 i\openssl_conf = default_conf' /etc/ssl/openssl.cnf"
+          sudo bash -c "echo '[ default_conf ]' >> /etc/ssl/openssl.cnf"
+          sudo bash -c "echo 'ssl_conf = ssl_sect' >> /etc/ssl/openssl.cnf"
+          sudo bash -c "echo '[ssl_sect]' >> /etc/ssl/openssl.cnf"
+          sudo bash -c "echo 'system_default = ssl_default_sect' >> /etc/ssl/openssl.cnf"
+          sudo bash -c "echo '[ssl_default_sect]' >> /etc/ssl/openssl.cnf"
+          sudo bash -c "echo 'MinProtocol = TLSv1.2' >> /etc/ssl/openssl.cnf"
+          sudo bash -c "echo 'CipherString = DEFAULT:@SECLEVEL=1' >> /etc/ssl/openssl.cnf"
       - name: Configure Runner - Windows
         if: contains(matrix.os, 'windows')
         run: |
