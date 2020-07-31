@@ -49,30 +49,33 @@ jobs:
       matrix:
         module: [core, servlet]
         protocol: ['', '''-Dtest.proxy=true''', '''-Dtest.https=true''', '''-Dtest.ajp=true''', '''-Dtest.h2=true''', '''-Dtest.h2c=true''', '''-Dtest.h2c-upgrade=true''']
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-20.04, windows-latest]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
-    - name: Update hosts - linux
-      if: matrix.os == 'ubuntu-latest'
+    - name: Configure Runner - Linux
+      if: contains(matrix.os,'ubuntu')
       run: |
-        cat /etc/hosts
+        hostname || true
         sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
         sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
         sudo sysctl -w fs.file-max=2097152
-    - name: Update hosts - windows
-      if: matrix.os == 'windows-latest'
+        sudo apt-get update -y
+        sudo apt-get install openssl net-tools -y
+    - name: Configure Runner - Windows
+      if: contains(matrix.os, 'windows')
       run: |
-        type %SystemRoot%\System32\drivers\etc\hosts
+        hostname || true
         echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' >	%SystemRoot%\System32\drivers\etc\hosts
         echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> %SystemRoot%\System32\drivers\etc\hosts
+        choco install openssl --version=1.1.1.4 -y
       shell: cmd
+    - name: Run netstat (pre)
+      if: always()
+      run: netstat -anp
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Host information
-      run: |
-       hostname || true
     - uses: actions/checkout@v2
     - name: Download Maven Repo
       uses: actions/download-artifact@v1
@@ -93,6 +96,9 @@ jobs:
       with:
         name: surefire-reports-${{ matrix.jdk }}-${{ matrix.module }}-${{ matrix.os }}-${{ matrix.ip }}-${{ matrix.protocol }}
         path: '**/surefire-reports/*.txt'
+    - name: Run netstat (post)
+      if: always()
+      run: netstat -anp
   test-matrix-websockets:
     name: JDK ${{ matrix.jdk }} - websockets-jsr - ${{ matrix.os }} - ${{ matrix.ip }}
     runs-on: ${{ matrix.os }}
@@ -104,26 +110,29 @@ jobs:
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
-      - name: Update hosts - linux
-        if: matrix.os == 'ubuntu-latest'
+      - name: Configure Runner - Linux
+        if: contains(matrix.os, 'ubuntu')
         run: |
-          cat /etc/hosts
+          hostname || true
           sudo bash -c "echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' > /etc/hosts"
           sudo bash -c "echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> /etc/hosts"
           sudo sysctl -w fs.file-max=2097152
-      - name: Update hosts - windows
-        if: matrix.os == 'windows-latest'
+          sudo apt-get update -y
+          sudo apt-get install openssl net-tools -y
+      - name: Configure Runner - Windows
+        if: contains(matrix.os, 'windows')
         run: |
-          type %SystemRoot%\System32\drivers\etc\hosts
+          hostname || true
           echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' >	%SystemRoot%\System32\drivers\etc\hosts
           echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> %SystemRoot%\System32\drivers\etc\hosts
+          choco install openssl --version=1.1.1.4 -y
         shell: cmd
+      - name: Run netstat (pre)
+        if: always()
+        run: netstat -anp
       - uses: n1hility/cancel-previous-runs@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Host information
-        run: |
-          hostname || true
       - uses: actions/checkout@v2
       - name: Download Maven Repo
         uses: actions/download-artifact@v1
@@ -144,3 +153,6 @@ jobs:
         with:
           name: surefire-reports-${{ matrix.jdk }}-${{ matrix.module }}-${{ matrix.os }}-${{ matrix.ip }}
           path: '**/surefire-reports/*.txt'
+      - name: Run netstat (post)
+        if: always()
+        run: netstat -anp
