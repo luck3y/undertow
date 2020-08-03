@@ -69,9 +69,6 @@ jobs:
       if: contains(matrix.os, 'windows')
       run: |
         hostname || true
-        hostname=$(hostname)
-        hostparam="\'-Ddefault.server.address=${hostname}\'"
-        echo ${{ hostparam }}
         mvn -U -B -fae test ${{ matrix.protocol }} ${{ hostParam }} 
         netsh interface tcp show global
         netsh int ipv4 show dynamicport tcp
@@ -103,7 +100,7 @@ jobs:
       run: |
         hostname=$(hostname)
         hostparam="\'-Ddefault.server.address=${hostname}\'"
-        mvn -U -B -fae test ${{ matrix.protocol }} ${{ hostparam }} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+        mvn -U -B -fae test ${{ matrix.protocol }} ${hostparam} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
