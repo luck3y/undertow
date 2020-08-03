@@ -97,8 +97,8 @@ jobs:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
       run: |
-        hostname=$(hostname)
-        hostparam="\'-Ddefault.server.address=${hostname}\'"
+        hn=$(hostname)
+        hostparam="\'-Ddefault.server.address=${hn}\'"
         mvn -U -B -fae test ${{ matrix.protocol }} ${hostparam} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
@@ -163,8 +163,8 @@ jobs:
           java-version: ${{ matrix.jdk }}
       - name: Run Tests
         run: |
-          hostname=$(hostname)
-          hostparam="''-Ddefault.server.address=${hostname}''"
+          hn=$(hostname)
+          hostparam="''-Ddefault.server.address=${hn}''"
           mvn -U -B -fae test ${{ matrix.ip }} ${hostparam} '-DfailIfNoTests=false' -pl websockets-jsr
       - uses: actions/upload-artifact@v2
         if: failure()
