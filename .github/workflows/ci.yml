@@ -96,7 +96,10 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
-      run: mvn -U -B -fae test ${{ matrix.protocol }} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+      run: |
+        hostname=$(hostname)
+        hostparam="''-Ddefault.server.address=${hostname}''"
+        mvn -U -B -fae test ${{ matrix.protocol }} ${hostParam} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
@@ -159,7 +162,10 @@ jobs:
         with:
           java-version: ${{ matrix.jdk }}
       - name: Run Tests
-        run: mvn -U -B -fae test ${{ matrix.ip }} '-DfailIfNoTests=false' -pl websockets-jsr
+        run: |
+          hostname=$(hostname)
+          hostparam="''-Ddefault.server.address=${hostname}''"
+          mvn -U -B -fae test ${{ matrix.ip }} ${hostparam} '-DfailIfNoTests=false' -pl websockets-jsr
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
