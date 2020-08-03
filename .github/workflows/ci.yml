@@ -49,7 +49,8 @@ jobs:
       matrix:
         module: [core, servlet]
         protocol: ['', '''-Dtest.proxy=true''', '''-Dtest.https=true''', '''-Dtest.ajp=true''', '''-Dtest.h2=true''', '''-Dtest.h2c=true''', '''-Dtest.h2c-upgrade=true''']
-        os: [ubuntu-20.04, windows-latest]
+        #os: [ubuntu-20.04, windows-latest]
+        os: [windows-latest]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
@@ -110,7 +111,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-latest]
+        #os: [ubuntu-20.04, windows-latest]
+        os: [windows-latest]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
