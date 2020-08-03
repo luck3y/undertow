@@ -103,7 +103,7 @@ jobs:
       run: |
         hostname=$(hostname)
         hostparam="\'-Ddefault.server.address=${hostname}\'"
-        mvn -U -B -fae test ${{ matrix.protocol }} ${{ hostParam }} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+        mvn -U -B -fae test ${{ matrix.protocol }} ${{ hostparam }} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
