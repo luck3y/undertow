@@ -111,8 +111,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #os: [ubuntu-20.04, windows-latest]
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, windows-latest]
+        #os: [ubuntu-20.04]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
