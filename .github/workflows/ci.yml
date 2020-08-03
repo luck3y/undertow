@@ -98,7 +98,7 @@ jobs:
     - name: Run Tests
       run: |
         hn=$(hostname)
-        hostparam="\'-Ddefault.server.address=${hn}\'"
+        hostparam="'-Ddefault.server.address=${hn}'"
         mvn -U -B -fae test ${{ matrix.protocol }} ${hostparam} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
       shell: bash
     - uses: actions/upload-artifact@v2
@@ -165,7 +165,7 @@ jobs:
       - name: Run Tests
         run: |
           hn=$(hostname)
-          hostparam="''-Ddefault.server.address=${hn}''"
+          hostparam="'-Ddefault.server.address=${hn}'"
           mvn -U -B -fae test ${{ matrix.ip }} ${hostparam} '-DfailIfNoTests=false' -pl websockets-jsr
         shell: bash
       - uses: actions/upload-artifact@v2
