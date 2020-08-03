@@ -69,7 +69,6 @@ jobs:
       if: contains(matrix.os, 'windows')
       run: |
         hostname || true
-        mvn -U -B -fae test ${{ matrix.protocol }} ${{ hostParam }} 
         netsh interface tcp show global
         netsh int ipv4 show dynamicport tcp
         echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' >	%SystemRoot%\System32\drivers\etc\hosts
