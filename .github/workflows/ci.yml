@@ -65,18 +65,11 @@ jobs:
         sudo sysctl -w net.ipv4.tcp_tw_reuse=0
         sudo apt-get update -y
         sudo apt-get install openssl net-tools -y
-        sudo bash -c "sed -i '1 i\openssl_conf = default_conf' /etc/ssl/openssl.cnf"
-        sudo bash -c "echo '[ default_conf ]' >> /etc/ssl/openssl.cnf"
-        sudo bash -c "echo 'ssl_conf = ssl_sect' >> /etc/ssl/openssl.cnf"
-        sudo bash -c "echo '[ssl_sect]' >> /etc/ssl/openssl.cnf"
-        sudo bash -c "echo 'system_default = ssl_default_sect' >> /etc/ssl/openssl.cnf"
-        sudo bash -c "echo '[ssl_default_sect]' >> /etc/ssl/openssl.cnf"
-        sudo bash -c "echo 'MinProtocol = TLSv1.2' >> /etc/ssl/openssl.cnf"
-        sudo bash -c "echo 'CipherString = DEFAULT:@SECLEVEL=1' >> /etc/ssl/openssl.cnf"
     - name: Configure Runner - Windows
       if: contains(matrix.os, 'windows')
       run: |
         hostname || true
+        netsh int ipv4 show dynamicport tcp
         echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' >	%SystemRoot%\System32\drivers\etc\hosts
         echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> %SystemRoot%\System32\drivers\etc\hosts
         choco install openssl --version=1.1.1.4 -y
@@ -134,18 +127,11 @@ jobs:
           sudo sysctl -w net.ipv4.tcp_tw_reuse=0
           sudo apt-get update -y
           sudo apt-get install openssl net-tools -y
-          sudo bash -c "sed -i '1 i\openssl_conf = default_conf' /etc/ssl/openssl.cnf"
-          sudo bash -c "echo '[ default_conf ]' >> /etc/ssl/openssl.cnf"
-          sudo bash -c "echo 'ssl_conf = ssl_sect' >> /etc/ssl/openssl.cnf"
-          sudo bash -c "echo '[ssl_sect]' >> /etc/ssl/openssl.cnf"
-          sudo bash -c "echo 'system_default = ssl_default_sect' >> /etc/ssl/openssl.cnf"
-          sudo bash -c "echo '[ssl_default_sect]' >> /etc/ssl/openssl.cnf"
-          sudo bash -c "echo 'MinProtocol = TLSv1.2' >> /etc/ssl/openssl.cnf"
-          sudo bash -c "echo 'CipherString = DEFAULT:@SECLEVEL=1' >> /etc/ssl/openssl.cnf"
       - name: Configure Runner - Windows
         if: contains(matrix.os, 'windows')
         run: |
           hostname || true
+          netsh int ipv4 show dynamicport tcp
           echo '127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4' >	%SystemRoot%\System32\drivers\etc\hosts
           echo '::1         localhost localhost.localdomain localhost6 localhost6.localdomain6' >> %SystemRoot%\System32\drivers\etc\hosts
           choco install openssl --version=1.1.1.4 -y
