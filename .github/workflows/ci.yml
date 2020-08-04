@@ -97,7 +97,9 @@ jobs:
         java-version: ${{ matrix.jdk }}
     - name: Run Tests
       run: |
-        mvn -U -B -fae test ${{ matrix.protocol }} --define=default.server.address=${{ env.hostname }} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+        hn=$(hostname)
+        mvn -U -B -fae test ${{ matrix.protocol }} --define=default.server.address=${hostname} ${{ matrix.ip }} '-DfailIfNoTests=false' -pl ${{ matrix.module }}
+      shell: bash
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
