@@ -50,7 +50,7 @@ jobs:
         module: [core, servlet]
         protocol: ['', '''-Dtest.proxy=true''', '''-Dtest.https=true''', '''-Dtest.ajp=true''', '''-Dtest.h2=true''', '''-Dtest.h2c=true''', '''-Dtest.h2c-upgrade=true''']
         #os: [ubuntu-20.04, windows-latest]
-        os: [windows-2016, openshift]
+        os: [openshift]
         jdk: [8, 11]
         ip: ['''-Dtest.ipv6=true''', '']
     steps:
