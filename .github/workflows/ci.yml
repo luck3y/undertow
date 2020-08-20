@@ -76,9 +76,6 @@ jobs:
         choco upgrade openssl -ry
         refreshenv
       shell: cmd
-    - name: Run netstat (pre)
-      if: always()
-      run: netstat -anp
     - uses: n1hility/cancel-previous-runs@v2
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -105,9 +102,6 @@ jobs:
       with:
         name: surefire-reports-${{ matrix.jdk }}-${{ matrix.module }}-${{ matrix.os }}-${{ matrix.ip }}-${{ matrix.protocol }}
         path: '**/surefire-reports/*.txt'
-    - name: Run netstat (post)
-      if: always()
-      run: netstat -anp
   # test-matrix-websockets:
   #   name: JDK ${{ matrix.jdk }} - websockets-jsr - ${{ matrix.os }} - ${{ matrix.ip }}
   #   runs-on: ${{ matrix.os }}
